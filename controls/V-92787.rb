@@ -53,5 +53,18 @@ server's private key.
   tag fix_id: 'F-99031r1_fix'
   tag cci: ['CCI-000186']
   tag nist: ['IA-5 (2) (b)']
+
+  ssl_module = command("httpd -M | grep -i ssl_module").stdout
+
+  describe ssl_module do 
+    it {should include "ssl_module" }
+  end
+
+  describe "The private key should not be accessible by unauthenticated or unauthorized users" do 
+    skip "Review the private key path in the \"SSLCertificateFile\" directive in Apache config file. 
+      Verify only authenticated system administrators and the designated PKI Sponsor for the web server can access 
+      the web server private key."
+  end
+
 end
 

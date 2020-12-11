@@ -68,5 +68,18 @@ to not aid in the blueprinting of the Apache web server.
   tag fix_id: 'F-99049r1_fix'
   tag cci: ['CCI-001312']
   tag nist: ['SI-11 a']
+
+  config_path = input('config_path')
+  ssl_module = command("httpd -M | grep -i ssl_module").stdout
+  error_document = command("grep '^ErrorDocument' #{apache_conf(config_path)}").stdout
+
+  describe ssl_module do 
+    it { should include "ssl_module" }
+  end
+
+  describe error_document do 
+    it { should_not cmp "" }
+  end
+  
 end
 

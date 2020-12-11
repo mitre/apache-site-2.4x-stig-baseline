@@ -40,5 +40,13 @@ for HTTP and HTTPS."
   tag fix_id: 'F-99087r1_fix'
   tag cci: ['CCI-000366']
   tag nist: ['CM-6 b']
-end
 
+  describe "Review the website to determine if HTTP and HTTPs are used in accordance with well-known ports" do 
+    skip "Ensure the website enforces the use of IANA well-known ports for \"HTTP\" and \"HTTPS\" (e.g., 80 and 443) or 
+      those ports and services as registered and approved for use by the DoD PPSM. 
+      Verify that any variation in PPS is documented, registered, and approved by the PPSM. 
+      If well-known ports and services are not approved for used by PPSM, this is a finding
+      "
+  end
+
+end

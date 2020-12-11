@@ -44,5 +44,19 @@ server’s system files."
   tag fix_id: 'F-99043r1_fix'
   tag cci: ['CCI-001084']
   tag nist: ['SC-3']
-end
 
+  config_path = input('config_path')
+  doc_mounts = Array.new()
+  document_root = apache_conf(config_path).params("DocumentRoot")
+
+  document_root.each do |docs|
+    doc_mounts.push(command("df -k #{docs}").stdout.strip.split(" ")[-1])
+  end 
+
+  describe "Apache web server document directory must be in a separate partition from the Apache web servers system files." do 
+    skip "The document directories were found on #{doc_mounts.join(", ")}. 
+      If the document root path is on the same partition as the web server system files or the operating system file systems, this is a finding."
+
+  end
+
+end

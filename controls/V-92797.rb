@@ -40,5 +40,12 @@ server in the event of the necessity for rollback.
   tag fix_id: 'F-99041r1_fix'
   tag cci: ['CCI-001190']
   tag nist: ['SC-24']
+
+  describe "The Apache web server must augment re-creation to a stable and known baseline." do 
+    skip "Interview the System Administrator for the Apache web server. 
+      Ask for documentation on the disaster recovery methods tested and planned for the Apache web server in the event of the necessity for rollback.
+      If documentation for a disaster recovery has not been established, this is a finding."
+  end
+  
 end
 

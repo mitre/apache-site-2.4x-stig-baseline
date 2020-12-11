@@ -81,5 +81,16 @@ bypass the content switch to access the websites.
 'CCI-002476']
   tag nist: ['AC-17 (2)', 'IA-5 (1) (c)', 'AC-3', 'IA-7', 'SC-18 (1)', "AC-17
 (2)", 'SC-8', 'SC-8 (2)', 'SC-8 (2)', 'SC-28 (1)']
+
+  config_path = input('config_path')
+  ssl_module = command("httpd -M | grep -i ssl_module").stdout 
+
+  describe ssl_module do 
+    it { should include "ssl_module" }
+  end 
+
+  describe apache_conf(config_path) do 
+    its("SSLProtocol") { should include "TLSv1.2" }
+  end
 end
 

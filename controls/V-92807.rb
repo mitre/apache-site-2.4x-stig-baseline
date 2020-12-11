@@ -53,5 +53,18 @@ because the default value is \"On\".
   tag fix_id: 'F-99051r1_fix'
   tag cci: ['CCI-001312']
   tag nist: ['SI-11 a']
+
+  config_path = input('config_path')
+  trace = command("grep '^TraceEnable' #{apache_conf(config_path)}").stdout
+
+  if !trace.empty?
+    describe trace.split(" ")[1] do 
+      it { should cmp "Off" }
+    end
+  else
+    describe "Debugging and trace information used to diagnose the Apache web server must be disabled." do 
+      skip "Trace confiuration is not set in Apache config file"
+    end
+  end
 end
 

@@ -54,5 +54,24 @@ DoD-approved PKIs (e.g., DoD PKI, DoD ECA, and DoD-approved external partners)."
   tag fix_id: 'F-99065r1_fix'
   tag cci: ['CCI-002470']
   tag nist: ['SC-23 (5)']
-end
 
+  config_path = input('config_path')
+  ssl_module = command("httpd -M | grep -i ssl_module")
+  cert_location = apache_conf(config_path).params('SSLCACertificateFile')
+
+  describe "Module ssl_module should be installed" do 
+    subject { ssl_module.stdout.strip } 
+    it {should_not cmp "" }
+  end
+
+  if !cert_location.nil?
+    describe "This is a manual check" do 
+      skip "Examine the contents of the SSL CA Certificate file: #{cert_location.join(",")} If the trusted CAs are not DoD approved. This is a finding."
+    end
+  else
+    describe "This is a manual check" do 
+      skip "Unable to find the location SSLCACertificateFile directive. The server must use DoD Approved CAs for authentication" 
+    end
+  end
+
+end

@@ -44,5 +44,19 @@ this is a finding.
   tag fix_id: 'F-99077r1_fix'
   tag cci: ['CCI-002418']
   tag nist: ['SC-8']
+
+  config_path = input('config_path')
+  session_cookie_module = command("http -M | grep -i session_cookie_module").stdout
+
+  describe session_cookie_module do 
+    it { should include "session_cookie_module" } 
+  end
+
+  describe apache_conf(config_path) do 
+    its("Session") { should cmp "on" }
+    its("SessionCookieName") { should include "httponly" }
+    its("SessionCookieName") { should include "secure" }
+  end
+
 end
 

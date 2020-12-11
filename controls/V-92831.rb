@@ -60,5 +60,17 @@ this is a finding.
   tag fix_id: 'F-99075r1_fix'
   tag cci: ['CCI-002418']
   tag nist: ['SC-8']
+
+  config_path = input('config_path')
+  ssl_module = command("httpd -M | grep -i ssl_module").stdout 
+
+  describe ssl_module do 
+    it {should include "ssl_module" }
+  end
+
+  describe apache_conf(config_path) do 
+    its("SSLCompression") { should cmp "off" }
+  end
+  
 end
 

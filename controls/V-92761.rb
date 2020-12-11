@@ -55,5 +55,17 @@ not exist, this is a finding.
   tag fix_id: 'F-99005r1_fix'
   tag cci: ['CCI-000054']
   tag nist: ['AC-10']
+
+  session_module = command("httpd -M | grep session_module").stdout
+  usertrack_module = command("httpd -M | grep usertrack_module").stdout
+
+  describe session_module do
+    it { should include "session_module" }
+  end
+
+  describe usertrack_module do
+    it { should include "usertrack_module" }
+  end
+  
 end
 

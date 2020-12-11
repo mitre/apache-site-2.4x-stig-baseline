@@ -48,5 +48,20 @@ and port.
   tag fix_id: 'F-99025r1_fix'
   tag cci: ['CCI-000382']
   tag nist: ['CM-7 b']
-end
 
+  config_path = input('config_path')
+  virtual_host = apache_conf(config_path).params("<VirtualHost")
+
+  if !virtual_host.nil?
+    virtual_host.each do |address|
+      describe address do 
+        it { should match /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]):[0-9]+>$/ }
+      end
+    end
+  else
+    describe "The Apache web server must be configured to use a specified IP address and port." do 
+      skip "Could not find the VirtualHost directive defined in Apache config file. This check has failed."
+    end
+  end
+
+end

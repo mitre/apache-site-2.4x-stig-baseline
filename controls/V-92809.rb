@@ -45,5 +45,11 @@ is a finding.
   tag fix_id: 'F-99053r1_fix'
   tag cci: ['CCI-002361']
   tag nist: ['AC-12']
+
+  config_path = input('config_path')
+  describe apache_conf(config_path) do 
+    its("SessionMaxAge") { should cmp 600 }
+  end
+  
 end
 
