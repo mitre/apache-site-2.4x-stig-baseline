@@ -71,5 +71,17 @@ of logged elements.
   tag fix_id: 'F-99013r1_fix'
   tag cci: ['CCI-000130']
   tag nist: ['AU-3']
+
+  config_path = input('config_path')
+  log_config = command("httpd -M | grep -i log_config_module").stdout 
+
+  describe log_config do 
+    it { should include "log_config_module" }
+  end 
+
+  describe apache_conf(config_path) do 
+    its("LogFormat") { should cmp "%a %A %h %H %l %m %s %t %u %U \"%{Referer}i\" \" common" }
+  end
+  
 end
 

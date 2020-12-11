@@ -55,5 +55,10 @@ finding.
   tag fix_id: 'F-99059r2_fix'
   tag cci: ['CCI-002314']
   tag nist: ['AC-17 (1)']
+
+  describe "If external controls such as host-based firewalls are used to restrict this access, this check is Not Applicable." do 
+    skip "Search for the \"RequireAll\" directive. If \"RequireAll\" is not configured or IP ranges configured to allow are not restrictive enough to prevent connections from nonsecure zones, this is a finding."
+  end
+  
 end
 

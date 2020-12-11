@@ -36,5 +36,13 @@ System Administrator, Web Manager, or the Web Manager designees."
   tag fix_id: 'F-99061r1_fix'
   tag cci: ['CCI-002235']
   tag nist: ['AC-6 (10)']
+
+  describe "Review access to the web administration tool" do 
+    skip "If accounts other than the System Administrator (SA), the Web Manager, or the Web Manager designees have access to the 
+    web administration tool or control files, this is a finding. Determine which tool or control file is used to control the 
+    configuration of the web server. If the control of the web server is done via control files, verify who has update access to them. 
+    If tools are being used to configure the web server, determine who has access to execute the tools."
+  end
+  
 end
 

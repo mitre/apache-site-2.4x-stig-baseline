@@ -42,5 +42,14 @@ directory tree, the shell, or other operating system functions and utilities."
   tag fix_id: 'F-99063r1_fix'
   tag cci: ['CCI-001813']
   tag nist: ['CM-5 (1)']
+
+  describe "The Apache web server application, libraries, and configuration files must only be accessible to privileged users." do 
+    skip "Obtain a list of the user accounts for the system, noting the privileges for each account.
+      Verify with the System Administrator (SA) or the Information System Security Officer (ISSO) that all privileged accounts are mission essential and documented. 
+      Verify with the SA or the ISSO that all non-administrator access to shell scripts and operating system functions are mission essential and documented.
+      If undocumented privileged accounts are found, this is a finding. 
+      If undocumented access to shell scripts or operating system functions is present, this is a finding."
+  end
+  
 end
 

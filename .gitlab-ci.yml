@@ -1,0 +1,17 @@
+include:
+- project: stig/inspec-scanning-integration
+  ref: 1.0.0
+  file: templates/dependencies.yml
+
+before_script:
+  - echo "SCV Pipeline for Apache 2.4 Site"
+
+stages:
+  - check
+  - lint   
+ 
+check Apache_2.4_Site:
+  extends: .ci:stage:check:inspec
+
+lint Apache_2.4_Site:
+  extends: .ci:stage:lint:inspec

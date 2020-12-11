@@ -39,5 +39,12 @@ medium-value applications, and 20 minutes for low-value applications.
   tag fix_id: 'F-99055r1_fix'
   tag cci: ['CCI-002361']
   tag nist: ['AC-12']
+
+  req_timeout_module = command("httpd -M | grep -i reqtimeout_module").stdout 
+
+  describe req_timeout_module do 
+    it { should include "reqtimeout_module" }
+  end
+  
 end
 

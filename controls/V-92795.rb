@@ -69,5 +69,24 @@ JavaScript.
   tag fix_id: 'F-99039r1_fix'
   tag cci: ['CCI-001664']
   tag nist: ['SC-23 (3)']
+
+  config_path = input('config_path')
+  headers = apache_conf(config_path).params("Header")
+
+  if !headers.nil? 
+    describe headers[0] do 
+      it { should include "HttpOnly" }
+      it { should include "secure" }
+    end
+  else
+    describe "Headers directive could not be found" do 
+      skip "Secure cookie settings must be defined in Header messages"
+    end
+  end
+
+  describe "Review application code for proper use of setting cookies" do 
+    skip "The JavaScript setCookies() function in application code must include the 'secure' parameter."
+  end
+  
 end
 

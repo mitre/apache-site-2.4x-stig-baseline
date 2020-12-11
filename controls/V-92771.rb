@@ -49,5 +49,16 @@ user management outside the web server.
   tag fix_id: 'F-99015r1_fix'
   tag cci: ['CCI-000381']
   tag nist: ['CM-7 a']
+
+  describe "Interview the System Administrator (SA) about the role of the Apache web server." do
+    skip "If the web server is hosting an application, have the SA provide supporting documentation 
+      on how the application's user management is accomplished outside of the web server.
+      If the web server is not hosting an application, this is Not Applicable. 
+      If the web server is performing user management for hosted applications, this is a finding. 
+      If the web server is hosting an application and the SA cannot provide supporting 
+      documentation on how the application's user management is accomplished outside 
+      of the Apache web server, this is a finding."
+  end
+  
 end
 

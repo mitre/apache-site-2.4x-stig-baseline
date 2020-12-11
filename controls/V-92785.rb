@@ -64,5 +64,27 @@ https://httpd.apache.org/docs/current/mod/ssl_module.html
   tag fix_id: 'F-99029r1_fix'
   tag cci: ['CCI-000185']
   tag nist: ['IA-5 (2) (a)']
+
+  config_path = input('config_path')
+  ssl_module = command("httpd -M | grep -i ssl_module").stdout
+
+  ssl_conf = "#{apache_conf(config_path).conf_dir[0]}/conf.d/ssl.conf"
+  ssl_verify_client = command("grep 'SSLVerifyClient' #{ssl_conf}").stdout.strip.split(" ")
+  ssl_verify_depth = command("grep 'SSLVerifyDepth' #{ssl_conf}").stdout.strip.split(" ")
+
+  describe ssl_module do 
+    it {should include "ssl_module" }
+  end
+
+  if file(ssl_conf).exist?
+    describe ssl_verify_client do 
+      it { should include "require" }
+    end
+
+    describe ssl_verify_depth do 
+      it { should include "1" }
+    end
+  end
+
 end
 

@@ -51,5 +51,11 @@ a value of \"10\" seconds or less.
   tag fix_id: 'F-99045r1_fix'
   tag cci: ['CCI-001094', 'CCI-002385']
   tag nist: ['SC-5 (1)', 'SC-5']
+
+  config_path = input('config_path')
+  describe apache_conf(config_path) do 
+    its("Timeout") { should cmp 10 }
+  end
+  
 end
 

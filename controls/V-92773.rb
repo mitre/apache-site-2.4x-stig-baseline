@@ -65,5 +65,42 @@ following (.exe, .dll, .com, .bat, or .csh), remove those references.
   tag fix_id: 'F-99017r1_fix'
   tag cci: ['CCI-000381']
   tag nist: ['CM-7 a']
-end
 
+  
+  config_path = input('config_path')
+  file_endings = [".exe", ".dll", ".com", ".bat", ".csh"]
+  actions = apache_conf(config_path).params("Action")
+  add_handlers = apache_conf(config_path).params("AddHandler")
+  
+  only_if("There are no Actions or AddHandlers") do
+    !actions.nil? && !add_handlers.nil?
+  end
+  
+  if !actions.nil? && !add_handlers.nil?
+    remove_add_handlers = add_handlers.select do |i|
+      file_endings.any? {|j| i.include?(j) }
+    end
+    remove_actions = actions.select do |i|
+      file_endings.any? {|j| i.include?(j) }
+    end
+    remove = remove_add_handlers + remove_actions 
+  
+  else
+    if actions.nil?
+      remove = add_handlers.select do |i|
+        file_endings.any? {|j| i.include?(j) }
+      end
+    end
+  
+    if add_handlers.nil?
+      remove = actions.select do |i|
+        file_endings.any? {|j| i.include?(j) }
+      end
+    end
+  end 
+  
+  describe "Certain file types must not be served by the Web Server" do 
+    skip "The following files were enabled by Actions/AddHandler directives and should be removed from the Apache configuration file: #{remove.join(', ')}"
+  end
+
+end

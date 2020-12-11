@@ -67,5 +67,21 @@ element.
   tag fix_id: 'F-99023r1_fix'
   tag cci: ['CCI-000381']
   tag nist: ['CM-7 a']
-end
+  
+  config_path = input('config_path')
+  httpd = apache_conf(config_path)
+  root_directory = Array.new
+  root_directory.push(command("grep -n '^<Directory />' #{httpd}").stdout.strip)
+  root_directory.push(command("grep -n -m1 '^</Directory>' #{httpd}").stdout.strip)
+  
+  line_numbers = root_directory ? root_directory.map {|tag| tag.split(":")[0]} : nil
 
+  chunk = command("sed -n '#{line_numbers[0]},#{line_numbers[1]}p' #{httpd}").stdout
+
+  describe chunk do 
+      it { should include "Require all denied" }
+      it { should_not cmp /Allow / }
+      it { should_not cmp /Deny / }
+  end
+  
+end
