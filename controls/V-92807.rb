@@ -55,16 +55,18 @@ because the default value is \"On\".
   tag nist: ['SI-11 a']
 
   config_path = input('config_path')
-  trace = command("grep '^TraceEnable' #{apache_conf(config_path)}").stdout
 
-  if !trace.empty?
-    describe trace.split(" ")[1] do 
-      it { should cmp "Off" }
-    end
-  else
-    describe "Debugging and trace information used to diagnose the Apache web server must be disabled." do 
-      skip "Trace confiuration is not set in Apache config file"
+  describe apache_conf(config_path) do 
+    its('TraceEnable') { should_not be_nil }
+  end
+
+  if !apache_conf(config_path).TraceEnable.nil?
+    apache_conf(config_path).TraceEnable.each do |value|
+      describe "TraceEnable value should be off" do
+        subject { value } 
+        it { should cmp 'off' }
+      end
     end
   end
-end
 
+end

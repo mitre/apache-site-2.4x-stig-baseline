@@ -62,10 +62,30 @@ transmission, the cookie \"Secure\" property can be set."
   end
 
   describe apache_conf(config_path) do 
-    its("Session") { should cmp "on" }
-    its("SessionCookieName") { should include "httponly" }
-    its("SessionCookieName") { should include "secure" }
+    its('SessionCookieName') { should_not be_nil }
+  end
+
+  if !apache_conf(config_path).SessionCookieName.nil?
+    apache_conf(config_path).SessionCookieName.each do |value|
+      describe "SessionCookieName value should return httpOnly and Secure" do
+        subject { value } 
+        it { should include "httpOnly" }
+        it { should include "Secure" }
+      end
+    end
+  end
+
+  describe apache_conf(config_path) do 
+    its('Session') { should_not be_nil }
+  end
+
+  if !apache_conf(config_path).Session.nil?
+    apache_conf(config_path).Session.each do |value|
+      describe "Session value should be set to on" do
+        subject { value } 
+        it { should cmp "on" }
+      end
+    end
   end
   
 end
-

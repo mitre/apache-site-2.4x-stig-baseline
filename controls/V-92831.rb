@@ -69,8 +69,16 @@ this is a finding.
   end
 
   describe apache_conf(config_path) do 
-    its("SSLCompression") { should cmp "off" }
+    its('SSLCompression') { should_not be_nil }
+  end
+
+  if !apache_conf(config_path).SSLCompression.nil?
+    apache_conf(config_path).SSLCompression.each do |value|
+      describe "SSLCompression value should be set to off" do
+        subject { value } 
+        it { should cmp 'off' }
+      end
+    end
   end
   
 end
-

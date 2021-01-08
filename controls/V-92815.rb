@@ -56,9 +56,25 @@ finding.
   tag cci: ['CCI-002314']
   tag nist: ['AC-17 (1)']
 
-  describe "If external controls such as host-based firewalls are used to restrict this access, this check is Not Applicable." do 
-    skip "Search for the \"RequireAll\" directive. If \"RequireAll\" is not configured or IP ranges configured to allow are not restrictive enough to prevent connections from nonsecure zones, this is a finding."
+  firewall = input('host_based_firewall_used')
+  config_path = input('config_path')
+
+  if firewall
+    impact 0.0
+  else
+    impact 0.5
+  end
+
+  describe apache_conf(config_path) do 
+    its('RequireAll') { should_not be_nil }
+  end
+
+  require_all = file(config_path).content.scan(/^\s*(<RequireAll[\s\S]*?>[\s\S]*?<\/RequireAll>)/)
+
+  if !apache_conf(config_path).RequireAll.nil?
+    describe "If IP ranges for RequireAll directive are not restrictive enough to prevent connections from nonsecure zones, this is a finding." do
+      skip "The RequireAll directive is provided below. A manual check is required to verify the IP addresses. \n #{require_all}\n"
+    end
   end
   
 end
-

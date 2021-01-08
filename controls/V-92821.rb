@@ -64,14 +64,16 @@ DoD-approved PKIs (e.g., DoD PKI, DoD ECA, and DoD-approved external partners)."
     it {should_not cmp "" }
   end
 
-  if !cert_location.nil?
-    describe "This is a manual check" do 
-      skip "Examine the contents of the SSL CA Certificate file: #{cert_location.join(",")} If the trusted CAs are not DoD approved. This is a finding."
+  DELIMITER = "\n-----END CERTIFICATE-----\n"
+  ca_bundle = file(cert_location[0]).content 
+  ca_certs = ca_bundle.split(DELIMITER)
+  ca_certs.each do |ca_cert|
+    ca_cert += DELIMITER
+
+    describe x509_certificate(content: ca_cert) do 
+      its('issuer.CN') { should cmp 'GTE CyberTrust Root' }
     end
-  else
-    describe "This is a manual check" do 
-      skip "Unable to find the location SSLCACertificateFile directive. The server must use DoD Approved CAs for authentication" 
-    end
+
   end
 
 end

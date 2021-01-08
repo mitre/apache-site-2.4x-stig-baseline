@@ -54,8 +54,16 @@ a value of \"10\" seconds or less.
 
   config_path = input('config_path')
   describe apache_conf(config_path) do 
-    its("Timeout") { should cmp 10 }
+    its('Timeout') { should_not be_nil }
   end
-  
-end
 
+  if !apache_conf(config_path).Timeout.nil?
+    apache_conf(config_path).Timeout.each do |value|
+      describe "Timeout value definition" do
+        subject { value } 
+        it { should cmp <= 10 }
+      end
+    end
+  end
+
+end

@@ -84,13 +84,26 @@ bypass the content switch to access the websites.
 
   config_path = input('config_path')
   ssl_module = command("httpd -M | grep -i ssl_module").stdout 
+  supported_protocols = ['-ALL', '+TLSv1.2', '+TLSv1.3']
 
   describe ssl_module do 
     it { should include "ssl_module" }
   end 
 
   describe apache_conf(config_path) do 
-    its("SSLProtocol") { should include "TLSv1.2" }
+    its('SSLProtocol') { should_not be_nil }
+    its("SSLProtocol") { should include "-ALL" }
+    its("SSLProtocol") { should include "+TLSv1.2" }
   end
+
+  if !apache_conf(config_path).SSLProtocol.nil?
+    apache_conf(config_path).SSLProtocol.each do |value|
+      describe "SSLProtocol value must use TLS Version 1.2" do
+        subject { value } 
+        it { should be_in supported_protocols }
+      end
+    end
+  end
+
 end
 

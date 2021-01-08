@@ -78,10 +78,10 @@ of logged elements.
   describe log_config do 
     it { should include "log_config_module" }
   end 
-
-  describe apache_conf(config_path) do 
-    its("LogFormat") { should cmp "%a %A %h %H %l %m %s %t %u %U \"%{Referer}i\" \" common" }
-  end
   
-end
+  describe apache_conf(config_path) do 
+    subject { file(config_path).content.to_s }
+    it { should match /^\s*LogFormat \"%a %A %h %H %l %m %s %t %u %U \\\"%{Referer}i\\\" \" common/ }
+  end 
 
+end

@@ -73,19 +73,17 @@ JavaScript.
   config_path = input('config_path')
   headers = apache_conf(config_path).params("Header")
 
-  if !headers.nil? 
-    describe headers[0] do 
-      it { should include "HttpOnly" }
-      it { should include "secure" }
-    end
-  else
-    describe "Headers directive could not be found" do 
-      skip "Secure cookie settings must be defined in Header messages"
-    end
+  describe apache_conf(config_path) do 
+    its('Header') { should_not be_nil }
   end
 
-  describe "Review application code for proper use of setting cookies" do 
-    skip "The JavaScript setCookies() function in application code must include the 'secure' parameter."
+  if !apache_conf(config_path).Header.nil?
+    apache_conf(config_path).Header.each do |value|
+      describe "Header should set cookie parameters" do
+        subject { value } 
+        it { should cmp "always edit Set-Cookie ^(.*)$ $1;HttpOnly;secure" }
+      end
+    end
   end
   
 end
