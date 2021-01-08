@@ -66,41 +66,28 @@ following (.exe, .dll, .com, .bat, or .csh), remove those references.
   tag cci: ['CCI-000381']
   tag nist: ['CM-7 a']
 
-  
   config_path = input('config_path')
+  ssl_module = command("httpd -M | grep -i ssl_module").stdout 
   file_endings = [".exe", ".dll", ".com", ".bat", ".csh"]
-  actions = apache_conf(config_path).params("Action")
-  add_handlers = apache_conf(config_path).params("AddHandler")
-  
-  only_if("There are no Actions or AddHandlers") do
-    !actions.nil? && !add_handlers.nil?
+
+  describe ssl_module do 
+    it { should include "ssl_module" }
+  end 
+
+  describe apache_conf(config_path) do
+    its('AddHandler.to_s') { should_not match '.exe'}
+    its('AddHandler.to_s') { should_not match '.dll'}
+    its('AddHandler.to_s') { should_not match '.com'}
+    its('AddHandler.to_s') { should_not match '.bat'}
+    its('AddHandler.to_s') { should_not match '.csh'}
   end
   
-  if !actions.nil? && !add_handlers.nil?
-    remove_add_handlers = add_handlers.select do |i|
-      file_endings.any? {|j| i.include?(j) }
-    end
-    remove_actions = actions.select do |i|
-      file_endings.any? {|j| i.include?(j) }
-    end
-    remove = remove_add_handlers + remove_actions 
-  
-  else
-    if actions.nil?
-      remove = add_handlers.select do |i|
-        file_endings.any? {|j| i.include?(j) }
-      end
-    end
-  
-    if add_handlers.nil?
-      remove = actions.select do |i|
-        file_endings.any? {|j| i.include?(j) }
-      end
-    end
-  end 
-  
-  describe "Certain file types must not be served by the Web Server" do 
-    skip "The following files were enabled by Actions/AddHandler directives and should be removed from the Apache configuration file: #{remove.join(', ')}"
+  describe apache_conf(config_path) do
+    its('Action.to_s') { should_not match '.exe'}
+    its('Action.to_s') { should_not match '.dll'}
+    its('Action.to_s') { should_not match '.com'}
+    its('Action.to_s') { should_not match '.bat'}
+    its('Action.to_s') { should_not match '.csh'}
   end
 
 end

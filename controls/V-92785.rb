@@ -68,23 +68,34 @@ https://httpd.apache.org/docs/current/mod/ssl_module.html
   config_path = input('config_path')
   ssl_module = command("httpd -M | grep -i ssl_module").stdout
 
-  ssl_conf = "#{apache_conf(config_path).conf_dir[0]}/conf.d/ssl.conf"
-  ssl_verify_client = command("grep 'SSLVerifyClient' #{ssl_conf}").stdout.strip.split(" ")
-  ssl_verify_depth = command("grep 'SSLVerifyDepth' #{ssl_conf}").stdout.strip.split(" ")
-
   describe ssl_module do 
-    it {should include "ssl_module" }
+    it { should include "ssl_module" }
+  end 
+  
+  describe apache_conf(config_path) do 
+    its('SSLVerifyClient') { should_not be_nil }
   end
 
-  if file(ssl_conf).exist?
-    describe ssl_verify_client do 
-      it { should include "require" }
+  if !apache_conf(config_path).SSLVerifyClient.nil?
+    apache_conf(config_path).SSLVerifyClient.each do |value|
+      describe "SSLVerifyClient should be set to require" do
+        subject { value } 
+        it { should cmp 'require' }
+      end
     end
+  end
 
-    describe ssl_verify_depth do 
-      it { should include "1" }
+  describe apache_conf(config_path) do 
+    its('SSLVerifyDepth') { should_not be_nil }
+  end
+
+  if !apache_conf(config_path).SSLVerifyDepth.nil?
+    apache_conf(config_path).SSLVerifyDepth.each do |value|
+      describe "SSLVerifyDepth should be set to 1" do
+        subject { value } 
+        it { should cmp > 0 }
+      end
     end
   end
 
 end
-

@@ -70,16 +70,10 @@ to not aid in the blueprinting of the Apache web server.
   tag nist: ['SI-11 a']
 
   config_path = input('config_path')
-  ssl_module = command("httpd -M | grep -i ssl_module").stdout
-  error_document = command("grep '^ErrorDocument' #{apache_conf(config_path)}").stdout
-
-  describe ssl_module do 
-    it { should include "ssl_module" }
+  describe apache_conf(config_path) do
+    its('ErrorDocument') { should_not be_empty }
+    its('ErrorDocument.to_s') { should match /4[0-9][0-9]/ }
+    its('ErrorDocument.to_s') { should match /5[0-9][0-9]/ }
   end
 
-  describe error_document do 
-    it { should_not cmp "" }
-  end
-  
 end
-

@@ -54,17 +54,27 @@ server's private key.
   tag cci: ['CCI-000186']
   tag nist: ['IA-5 (2) (b)']
 
+  config_path = input('config_path')
   ssl_module = command("httpd -M | grep -i ssl_module").stdout
 
   describe ssl_module do 
     it {should include "ssl_module" }
   end
 
-  describe "The private key should not be accessible by unauthenticated or unauthorized users" do 
-    skip "Review the private key path in the \"SSLCertificateFile\" directive in Apache config file. 
-      Verify only authenticated system administrators and the designated PKI Sponsor for the web server can access 
-      the web server private key."
+  describe SSLCertificateFile
+  describe apache_conf(config_path) do 
+    its('SSLCertificateFile') { should_not be_nil }
+  end
+
+  if !apache_conf(config_path).SSLCertificateFile.nil?
+    apache_conf(config_path).SSLCertificateFile.each do |value|
+      describe "SSLCertificateFile path should only be accessible by authorized users" do
+        subject { file(value) } 
+        its('owner') { should be_in input('server_admins') }
+        its('group') { should be_in input('server_admin_groups') }
+        its('mode') { should cmp '0400'}
+      end
+    end
   end
 
 end
-
