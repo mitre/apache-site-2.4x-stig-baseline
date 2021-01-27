@@ -59,12 +59,17 @@ document, this is a finding.
   tag nist: ['SI-11 a']
 
   config_path = input('config_path')
-  document_root = apache_conf(config_path).params("DocumentRoot")
 
-  describe "The Apache web server must display a default hosted application web page, not a directory listing, when a requested web page cannot be found." do 
-    skip "The document directories were found:\n#{document_root.join("\n")}\n\nReview the results for each document root directory and its subdirectories.
-      If a directory does not contain an \"index.html\" or equivalent default document, this is a finding."
+  describe apache_conf(config_path) do 
+    its('DocumentRoot') { should_not be_nil }
   end
-  
-end
 
+  if !apache_conf(config_path).DocumentRoot.nil?
+    apache_conf(config_path).DocumentRoot.each do |project_dir|
+      describe file("#{project_dir}/index.html") do 
+        it { should exist }
+      end
+    end
+  end
+
+end
