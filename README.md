@@ -19,6 +19,11 @@ While the Apache Server STIG automation profile check was developed to provide t
 
 ### This STIG Automated Compliance Validation Profile was developed based upon:
 - Apache Server Security Technical Implementation Guide
+### Update History 
+| Guidance Name  | Guidance Version | Guidance Location                            | Profile Version | Profile Release Date | STIG EOL    | Profile EOL |
+|---------------------------------------|------------------|--------------------------------------------|-----------------|----------------------|-------------|-------------|
+| Apache Site 2.4 STIG  | Ver 2, Rel 1    | https://public.cyber.mil/stigs/downloads/  |         1.0.0          |        28 Jan 2021           | NA | NA |
+| CIS Benchmark for Apache Site 2.4 9.x | NA  | https://www.cisecurity.org/cis-benchmarks/ | | | NA | NA |
 
 
 ## Getting Started
