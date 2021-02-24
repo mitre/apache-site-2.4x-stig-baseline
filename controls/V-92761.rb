@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'V-92761' do
   title 'The Apache web server must perform server-side session management.'
   desc  "Session management is the practice of protecting the bulk of the user
@@ -29,7 +27,7 @@ would not be compromised.
     If \"session_module\" module and \"usertrack_module\" are not enabled or do
 not exist, this is a finding.
   "
-  desc  'fix', "
+  desc 'fix', "
     If the modules are not installed, install any missing packages.
 
     Add the following lines to the \"httpd.conf\" file:
@@ -56,16 +54,14 @@ not exist, this is a finding.
   tag cci: ['CCI-000054']
   tag nist: ['AC-10']
 
-  session_module = command("httpd -M | grep session_module").stdout
-  usertrack_module = command("httpd -M | grep usertrack_module").stdout
+  session_module = command('httpd -M | grep session_module').stdout
+  usertrack_module = command('httpd -M | grep usertrack_module').stdout
 
   describe session_module do
-    it { should include "session_module" }
+    it { should include 'session_module' }
   end
 
   describe usertrack_module do
-    it { should include "usertrack_module" }
+    it { should include 'usertrack_module' }
   end
-  
 end
-

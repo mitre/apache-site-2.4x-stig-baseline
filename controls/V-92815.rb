@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'V-92815' do
   title "The Apache web server must restrict inbound connections from nonsecure
 zones."
@@ -36,7 +34,7 @@ access, this check is Not Applicable.
 not restrictive enough to prevent connections from nonsecure zones, this is a
 finding.
   "
-  desc  'fix', "
+  desc 'fix', "
     Configure the \"http.conf\" file to include restrictions.
 
     Example:
@@ -65,16 +63,15 @@ finding.
     impact 0.5
   end
 
-  describe apache_conf(config_path) do 
+  describe apache_conf(config_path) do
     its('RequireAll') { should_not be_nil }
   end
 
-  require_all = file(config_path).content.scan(/^\s*(<RequireAll[\s\S]*?>[\s\S]*?<\/RequireAll>)/)
+  require_all = file(config_path).content.scan(%r{^\s*(<RequireAll[\s\S]*?>[\s\S]*?</RequireAll>)})
 
-  if !apache_conf(config_path).RequireAll.nil?
-    describe "If IP ranges for RequireAll directive are not restrictive enough to prevent connections from nonsecure zones, this is a finding." do
+  unless apache_conf(config_path).RequireAll.nil?
+    describe 'If IP ranges for RequireAll directive are not restrictive enough to prevent connections from nonsecure zones, this is a finding.' do
       skip "The RequireAll directive is provided below. A manual check is required to verify the IP addresses. \n #{require_all}\n"
     end
   end
-  
 end

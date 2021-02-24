@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'V-92795' do
   title "Cookies exchanged between the Apache web server and client, such as
 session cookies, must have security settings that disallow cookie access
@@ -37,7 +35,7 @@ this is a finding:
     function setCookie() { document.cookie = \"ALEPH_SESSION_ID = $SESS; path =
 /; secure\"; }
   "
-  desc  'fix', "
+  desc 'fix', "
     Determine the location of the \"HTTPD_ROOT\" directory and the
 \"httpd.conf\" file:
 
@@ -71,20 +69,17 @@ JavaScript.
   tag nist: ['SC-23 (3)']
 
   config_path = input('config_path')
-  headers = apache_conf(config_path).params("Header")
 
-  describe apache_conf(config_path) do 
+  describe apache_conf(config_path) do
     its('Header') { should_not be_nil }
   end
 
-  if !apache_conf(config_path).Header.nil?
+  unless apache_conf(config_path).Header.nil?
     apache_conf(config_path).Header.each do |value|
-      describe "Header should set cookie parameters" do
-        subject { value } 
-        it { should cmp "always edit Set-Cookie ^(.*)$ $1;HttpOnly;secure" }
+      describe 'Header should set cookie parameters' do
+        subject { value }
+        it { should cmp 'always edit Set-Cookie ^(.*)$ $1;HttpOnly;secure' }
       end
     end
   end
-  
 end
-

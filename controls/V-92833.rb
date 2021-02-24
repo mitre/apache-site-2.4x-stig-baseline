@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'V-92833' do
   title "Cookies exchanged between the Apache web server and the client, such
 as session cookies, must have cookie properties set to prohibit client-side
@@ -22,7 +20,7 @@ this is a finding.
     If \"Session\" is not \"on\" and \"SessionCookieName\" does not contain
 \"httpOnly\" and \"secure\", this is a finding.
   "
-  desc  'fix', "
+  desc 'fix', "
     Determine the location of the \"HTTPD_ROOT\" directory and the
 \"httpd.conf\" file:
 
@@ -46,39 +44,36 @@ this is a finding.
   tag nist: ['SC-8']
 
   config_path = input('config_path')
-  session_cookie_module = command("http -M | grep -i session_cookie_module").stdout
+  session_cookie_module = command('http -M | grep -i session_cookie_module').stdout
 
-  describe session_cookie_module do 
-    it { should include "session_cookie_module" } 
+  describe session_cookie_module do
+    it { should include 'session_cookie_module' }
   end
 
-  describe apache_conf(config_path) do 
+  describe apache_conf(config_path) do
     its('SessionCookieName') { should_not be_nil }
   end
 
-  if !apache_conf(config_path).SessionCookieName.nil?
+  unless apache_conf(config_path).SessionCookieName.nil?
     apache_conf(config_path).SessionCookieName.each do |value|
-      describe "SessionCookieName value should return httpOnly and Secure" do
-        subject { value } 
-        it { should include "httpOnly" }
-        it { should include "Secure" }
+      describe 'SessionCookieName value should return httpOnly and Secure' do
+        subject { value }
+        it { should include 'httpOnly' }
+        it { should include 'Secure' }
       end
     end
   end
 
-  describe apache_conf(config_path) do 
+  describe apache_conf(config_path) do
     its('Session') { should_not be_nil }
   end
 
-  if !apache_conf(config_path).Session.nil?
+  unless apache_conf(config_path).Session.nil?
     apache_conf(config_path).Session.each do |value|
-      describe "Session value should be set to on" do
-        subject { value } 
-        it { should cmp "on" }
+      describe 'Session value should be set to on' do
+        subject { value }
+        it { should cmp 'on' }
       end
     end
   end
-
-
 end
-

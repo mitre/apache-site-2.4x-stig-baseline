@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'V-92775' do
   title "The Apache web server must allow mappings to unused and vulnerable
 scripts to be removed."
@@ -32,7 +30,7 @@ this is a finding.
     If this is not documented and approved by the Information System Security
 Officer (ISSO), this is a finding.
   "
-  desc  'fix', "
+  desc 'fix', "
     Determine the location of the \"HTTPD_ROOT\" directory and the
 \"httpd.conf\" file:
 
@@ -57,23 +55,20 @@ application operation.
 
   config_path = input('config_path')
   apache_conf_file = apache_conf(config_path)
-  scripts = apache_conf_file.params("Script")
-  script_alias = apache_conf_file.params("ScriptAlias")
-  script_alias_match = apache_conf_file.params("ScriptAliasMatch")
-  script_interpreter_source = apache_conf_file.params("ScriptInterpreterSource")
-  
+  scripts = apache_conf_file.params('Script')
+  script_alias = apache_conf_file.params('ScriptAlias')
+  script_alias_match = apache_conf_file.params('ScriptAliasMatch')
+  script_interpreter_source = apache_conf_file.params('ScriptInterpreterSource')
+
   check_dirs_final = []
 
-  scripts ? scripts.map {|e| check_dirs_final.push(e)} : nil
-  script_alias ? script_alias.map {|e| check_dirs_final.push(e)} : nil
-  script_alias_match ? script_alias_match.map {|e| check_dirs_final.push(e)} : nil
-  script_interpreter_source ? script_interpreter_source.map {|e| check_dirs_final.push(e)} : nil
+  scripts ? scripts.map { |e| check_dirs_final.push(e) } : nil
+  script_alias ? script_alias.map { |e| check_dirs_final.push(e) } : nil
+  script_alias_match ? script_alias_match.map { |e| check_dirs_final.push(e) } : nil
+  script_interpreter_source ? script_interpreter_source.map { |e| check_dirs_final.push(e) } : nil
 
-  describe "Review any unused scripts" do 
-    skip "If any scripts are present that are not needed for application operation, this is a finding. 
+  describe 'Review any unused scripts' do
+    skip "If any scripts are present that are not needed for application operation, this is a finding.
     The following locations need to be checked for cgi-bin files. Remove any scripts that are not needed for application operation. \n\nScript Locations:\n#{check_dirs_final.join("\n")}"
-
   end
-  
 end
-

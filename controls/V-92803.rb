@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'V-92803' do
   title "The Apache web server must display a default hosted application web
 page, not a directory listing, when a requested web page cannot be found."
@@ -38,7 +36,7 @@ commands:
     If a directory does not contain an \"index.html\" or equivalent default
 document, this is a finding.
   "
-  desc  'fix', "
+  desc 'fix', "
     Determine the location of the \"HTTPD_ROOT\" directory and the
 \"httpd.conf\" file:
 
@@ -60,16 +58,15 @@ document, this is a finding.
 
   config_path = input('config_path')
 
-  describe apache_conf(config_path) do 
+  describe apache_conf(config_path) do
     its('DocumentRoot') { should_not be_nil }
   end
 
-  if !apache_conf(config_path).DocumentRoot.nil?
+  unless apache_conf(config_path).DocumentRoot.nil?
     apache_conf(config_path).DocumentRoot.each do |project_dir|
-      describe file("#{project_dir}/index.html") do 
+      describe file("#{project_dir}/index.html") do
         it { should exist }
       end
     end
   end
-
 end

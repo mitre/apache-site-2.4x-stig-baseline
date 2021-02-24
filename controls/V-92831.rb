@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'V-92831' do
   title "The Apache web server cookies, such as session cookies, sent to the
 client using SSL/TLS must not be compressed."
@@ -37,7 +35,7 @@ should not also be compressed.
     If the \"SSLCompression\" directive does not exist or is set to \"on\",
 this is a finding.
   "
-  desc  'fix', "
+  desc 'fix', "
     Determine the location of the \"HTTPD_ROOT\" directory and the
 \"httpd.conf\" file:
 
@@ -62,23 +60,22 @@ this is a finding.
   tag nist: ['SC-8']
 
   config_path = input('config_path')
-  ssl_module = command("httpd -M | grep -i ssl_module").stdout 
+  ssl_module = command('httpd -M | grep -i ssl_module').stdout
 
-  describe ssl_module do 
-    it {should include "ssl_module" }
+  describe ssl_module do
+    it { should include 'ssl_module' }
   end
 
-  describe apache_conf(config_path) do 
+  describe apache_conf(config_path) do
     its('SSLCompression') { should_not be_nil }
   end
 
-  if !apache_conf(config_path).SSLCompression.nil?
+  unless apache_conf(config_path).SSLCompression.nil?
     apache_conf(config_path).SSLCompression.each do |value|
-      describe "SSLCompression value should be set to off" do
-        subject { value } 
+      describe 'SSLCompression value should be set to off' do
+        subject { value }
         it { should cmp 'off' }
       end
     end
   end
-  
 end

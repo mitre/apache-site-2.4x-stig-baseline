@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'V-92763' do
   title "The Apache web server must use encryption strength in accordance with
 the categorization of data hosted by the Apache web server when remote
@@ -48,7 +46,7 @@ individual websites. This solution is acceptable as long as the web servers are
 isolated from the general population LAN. Users should not have the ability to
 bypass the content switch to access the websites.
   "
-  desc  'fix', "
+  desc 'fix', "
     Determine the location of the \"HTTPD_ROOT\" directory and the
 \"httpd.conf\" file:
 
@@ -65,45 +63,43 @@ bypass the content switch to access the websites.
   impact 0.5
   tag severity: 'medium'
   tag gtitle: 'SRG-APP-000014-WSR-000006'
-  tag satisfies: ['SRG-APP-000014-WSR-000006', 'SRG-APP-000015-WSR-000014',
-'SRG-APP-000033-WSR-000169', 'SRG-APP-000172-WSR-000104',
-'SRG-APP-000179-WSR-000110', 'SRG-APP-000179-WSR-000111',
-'SRG-APP-000206-WSR-000128', 'SRG-APP-000429-WSR-000113',
-'SRG-APP-000439-WSR-000151', 'SRG-APP-000439-WSR-000152',
-'SRG-APP-000439-WSR-000156', 'SRG-APP-000441-WSR-000181',
-'SRG-APP-000442-WSR-000182']
+  tag satisfies: %w(SRG-APP-000014-WSR-000006 SRG-APP-000015-WSR-000014
+SRG-APP-000033-WSR-000169 SRG-APP-000172-WSR-000104
+SRG-APP-000179-WSR-000110 SRG-APP-000179-WSR-000111
+SRG-APP-000206-WSR-000128 SRG-APP-000429-WSR-000113
+SRG-APP-000439-WSR-000151 SRG-APP-000439-WSR-000152
+SRG-APP-000439-WSR-000156 SRG-APP-000441-WSR-000181
+SRG-APP-000442-WSR-000182)
   tag gid: 'V-92763'
   tag rid: 'SV-102851r1_rule'
   tag stig_id: 'AS24-U2-000030'
   tag fix_id: 'F-99007r1_fix'
-  tag cci: ['CCI-000068', 'CCI-000197', 'CCI-000213', 'CCI-000803',
-'CCI-001166', 'CCI-001453', 'CCI-002418', 'CCI-002420', 'CCI-002422',
-'CCI-002476']
+  tag cci: %w(CCI-000068 CCI-000197 CCI-000213 CCI-000803
+CCI-001166 CCI-001453 CCI-002418 CCI-002420 CCI-002422
+CCI-002476)
   tag nist: ['AC-17 (2)', 'IA-5 (1) (c)', 'AC-3', 'IA-7', 'SC-18 (1)', "AC-17
 (2)", 'SC-8', 'SC-8 (2)', 'SC-8 (2)', 'SC-28 (1)']
 
   config_path = input('config_path')
-  ssl_module = command("httpd -M | grep -i ssl_module").stdout 
+  ssl_module = command('httpd -M | grep -i ssl_module').stdout
   supported_protocols = ['-ALL', '+TLSv1.2', '+TLSv1.3']
 
-  describe ssl_module do 
-    it { should include "ssl_module" }
-  end 
-
-  describe apache_conf(config_path) do 
-    its('SSLProtocol') { should_not be_nil }
-    its("SSLProtocol") { should include "-ALL" }
-    its("SSLProtocol") { should include "+TLSv1.2" }
+  describe ssl_module do
+    it { should include 'ssl_module' }
   end
 
-  if !apache_conf(config_path).SSLProtocol.nil?
+  describe apache_conf(config_path) do
+    its('SSLProtocol') { should_not be_nil }
+    its('SSLProtocol') { should include '-ALL' }
+    its('SSLProtocol') { should include '+TLSv1.2' }
+  end
+
+  unless apache_conf(config_path).SSLProtocol.nil?
     apache_conf(config_path).SSLProtocol.each do |value|
-      describe "SSLProtocol value must use TLS Version 1.2" do
-        subject { value } 
+      describe 'SSLProtocol value must use TLS Version 1.2' do
+        subject { value }
         it { should be_in supported_protocols }
       end
     end
   end
-
 end
-

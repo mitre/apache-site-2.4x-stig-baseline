@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'V-92807' do
   title "Debugging and trace information used to diagnose the Apache web server
 must be disabled."
@@ -34,7 +32,7 @@ configuration and/or is not set to \"Off\", this is a finding.
     If the directive does not exist in the \"conf\" file, this is a finding
 because the default value is \"On\".
   "
-  desc  'fix', "
+  desc 'fix', "
     Determine the location of the \"HTTPD_ROOT\" directory and the
 \"httpd.conf\" file:
 
@@ -56,17 +54,16 @@ because the default value is \"On\".
 
   config_path = input('config_path')
 
-  describe apache_conf(config_path) do 
+  describe apache_conf(config_path) do
     its('TraceEnable') { should_not be_nil }
   end
 
-  if !apache_conf(config_path).TraceEnable.nil?
+  unless apache_conf(config_path).TraceEnable.nil?
     apache_conf(config_path).TraceEnable.each do |value|
-      describe "TraceEnable value should be off" do
-        subject { value } 
+      describe 'TraceEnable value should be off' do
+        subject { value }
         it { should cmp 'off' }
       end
     end
   end
-
 end

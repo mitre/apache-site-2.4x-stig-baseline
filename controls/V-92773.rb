@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'V-92773' do
   title "The Apache web server must have Multipurpose Internet Mail Extensions
 (MIME) that invoke operating system shell programs disabled."
@@ -39,7 +37,7 @@ server.
     If this is not documented and approved by the Information System Security
 Officer (ISSO), this is a finding.
   "
-  desc  'fix', "
+  desc 'fix', "
     Determine the location of the \"HTTPD_ROOT\" directory and the
 \"httpd.conf\" file:
 
@@ -67,27 +65,25 @@ following (.exe, .dll, .com, .bat, or .csh), remove those references.
   tag nist: ['CM-7 a']
 
   config_path = input('config_path')
-  ssl_module = command("httpd -M | grep -i ssl_module").stdout 
-  file_endings = [".exe", ".dll", ".com", ".bat", ".csh"]
+  ssl_module = command('httpd -M | grep -i ssl_module').stdout
 
-  describe ssl_module do 
-    it { should include "ssl_module" }
-  end 
-
-  describe apache_conf(config_path) do
-    its('AddHandler.to_s') { should_not match '.exe'}
-    its('AddHandler.to_s') { should_not match '.dll'}
-    its('AddHandler.to_s') { should_not match '.com'}
-    its('AddHandler.to_s') { should_not match '.bat'}
-    its('AddHandler.to_s') { should_not match '.csh'}
-  end
-  
-  describe apache_conf(config_path) do
-    its('Action.to_s') { should_not match '.exe'}
-    its('Action.to_s') { should_not match '.dll'}
-    its('Action.to_s') { should_not match '.com'}
-    its('Action.to_s') { should_not match '.bat'}
-    its('Action.to_s') { should_not match '.csh'}
+  describe ssl_module do
+    it { should include 'ssl_module' }
   end
 
+  describe apache_conf(config_path) do
+    its('AddHandler.to_s') { should_not match '.exe' }
+    its('AddHandler.to_s') { should_not match '.dll' }
+    its('AddHandler.to_s') { should_not match '.com' }
+    its('AddHandler.to_s') { should_not match '.bat' }
+    its('AddHandler.to_s') { should_not match '.csh' }
+  end
+
+  describe apache_conf(config_path) do
+    its('Action.to_s') { should_not match '.exe' }
+    its('Action.to_s') { should_not match '.dll' }
+    its('Action.to_s') { should_not match '.com' }
+    its('Action.to_s') { should_not match '.bat' }
+    its('Action.to_s') { should_not match '.csh' }
+  end
 end

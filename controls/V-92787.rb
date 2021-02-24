@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'V-92787' do
   title "Only authenticated system administrators or the designated PKI Sponsor
 for the Apache web server must have access to the Apache web servers private
@@ -32,7 +30,7 @@ web server can access the web server private key.
     If the private key is accessible by unauthenticated or unauthorized users,
 this is a finding.
   "
-  desc  'fix', "
+  desc 'fix', "
     Determine the location of the \"HTTPD_ROOT\" directory and the
 \"httpd.conf\" file:
 
@@ -55,26 +53,25 @@ server's private key.
   tag nist: ['IA-5 (2) (b)']
 
   config_path = input('config_path')
-  ssl_module = command("httpd -M | grep -i ssl_module").stdout
+  ssl_module = command('httpd -M | grep -i ssl_module').stdout
 
-  describe ssl_module do 
-    it {should include "ssl_module" }
+  describe ssl_module do
+    it { should include 'ssl_module' }
   end
 
   describe SSLCertificateFile
-  describe apache_conf(config_path) do 
+  describe apache_conf(config_path) do
     its('SSLCertificateFile') { should_not be_nil }
   end
 
-  if !apache_conf(config_path).SSLCertificateFile.nil?
+  unless apache_conf(config_path).SSLCertificateFile.nil?
     apache_conf(config_path).SSLCertificateFile.each do |value|
-      describe "SSLCertificateFile path should only be accessible by authorized users" do
-        subject { file(value) } 
+      describe 'SSLCertificateFile path should only be accessible by authorized users' do
+        subject { file(value) }
         its('owner') { should be_in input('server_admins') }
         its('group') { should be_in input('server_admin_groups') }
-        its('mode') { should cmp '0400'}
+        its('mode') { should cmp '0400' }
       end
     end
   end
-
 end
