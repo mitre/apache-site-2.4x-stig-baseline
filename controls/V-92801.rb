@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'V-92801' do
   title "The Apache web server must be tuned to handle the operational
 requirements of the hosted application."
@@ -28,7 +26,7 @@ tuned to handle the expected traffic for the hosted applications.
     If the \"Timeout\" directive is not configured or is set for more than
 \"10\" seconds, this is a finding.
   "
-  desc  'fix', "
+  desc 'fix', "
     Determine the location of the \"HTTPD_ROOT\" directory and the
 \"httpd.conf\" file:
 
@@ -44,26 +42,25 @@ a value of \"10\" seconds or less.
   impact 0.5
   tag severity: 'medium'
   tag gtitle: 'SRG-APP-000246-WSR-000149'
-  tag satisfies: ['SRG-APP-000246-WSR-000149', 'SRG-APP-000435-WSR-000148']
+  tag satisfies: %w(SRG-APP-000246-WSR-000149 SRG-APP-000435-WSR-000148)
   tag gid: 'V-92801'
   tag rid: 'SV-102889r1_rule'
   tag stig_id: 'AS24-U2-000590'
   tag fix_id: 'F-99045r1_fix'
-  tag cci: ['CCI-001094', 'CCI-002385']
+  tag cci: %w(CCI-001094 CCI-002385)
   tag nist: ['SC-5 (1)', 'SC-5']
 
   config_path = input('config_path')
-  describe apache_conf(config_path) do 
+  describe apache_conf(config_path) do
     its('Timeout') { should_not be_nil }
   end
 
-  if !apache_conf(config_path).Timeout.nil?
+  unless apache_conf(config_path).Timeout.nil?
     apache_conf(config_path).Timeout.each do |value|
-      describe "Timeout value definition" do
-        subject { value } 
+      describe 'Timeout value definition' do
+        subject { value }
         it { should cmp <= 10 }
       end
     end
   end
-
 end

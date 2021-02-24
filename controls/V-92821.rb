@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'V-92821' do
   title "The Apache web server must only accept client certificates issued by
 DoD PKI or DoD-approved PKI Certification Authorities (CAs)."
@@ -43,7 +41,7 @@ Authorities (ECA) if approved by the AO. The PKE InstallRoot 3.06 System
 Administrator Guide (SAG), dated 08 Jul 2008, contains a complete list of DoD,
 ECA, and IECA CAs.
   "
-  desc  'fix', "Configure the web server’s trust store to trust only
+  desc 'fix', "Configure the web server’s trust store to trust only
 DoD-approved PKIs (e.g., DoD PKI, DoD ECA, and DoD-approved external partners)."
   impact 0.5
   tag severity: 'medium'
@@ -56,24 +54,22 @@ DoD-approved PKIs (e.g., DoD PKI, DoD ECA, and DoD-approved external partners)."
   tag nist: ['SC-23 (5)']
 
   config_path = input('config_path')
-  ssl_module = command("httpd -M | grep -i ssl_module")
+  ssl_module = command('httpd -M | grep -i ssl_module')
   cert_location = apache_conf(config_path).params('SSLCACertificateFile')
 
-  describe "Module ssl_module should be installed" do 
-    subject { ssl_module.stdout.strip } 
-    it {should_not cmp "" }
+  describe 'Module ssl_module should be installed' do
+    subject { ssl_module.stdout.strip }
+    it { should_not cmp '' }
   end
 
-  DELIMITER = "\n-----END CERTIFICATE-----\n"
-  ca_bundle = file(cert_location[0]).content 
+  DELIMITER = "\n-----END CERTIFICATE-----\n".freeze
+  ca_bundle = file(cert_location[0]).content
   ca_certs = ca_bundle.split(DELIMITER)
   ca_certs.each do |ca_cert|
     ca_cert += DELIMITER
 
-    describe x509_certificate(content: ca_cert) do 
+    describe x509_certificate(content: ca_cert) do
       its('issuer.CN') { should cmp 'GTE CyberTrust Root' }
     end
-
   end
-
 end

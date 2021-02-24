@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'V-92781' do
   title "The Apache web server must be configured to use a specified IP address
 and port."
@@ -28,7 +26,7 @@ port.
 
     If there is not, this is a finding.
   "
-  desc  'fix', "
+  desc 'fix', "
     Determine the location of the \"HTTPD_ROOT\" directory and the
 \"httpd.conf\" file:
 
@@ -50,18 +48,17 @@ and port.
   tag nist: ['CM-7 b']
 
   config_path = input('config_path')
-  virtual_host = apache_conf(config_path).params("<VirtualHost")
+  virtual_host = apache_conf(config_path).params('<VirtualHost')
 
   if !virtual_host.nil?
     virtual_host.each do |address|
-      describe address do 
+      describe address do
         it { should match /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]):[0-9]+>$/ }
       end
     end
   else
-    describe "The Apache web server must be configured to use a specified IP address and port." do 
-      skip "Could not find the VirtualHost directive defined in Apache config file. This check has failed."
+    describe 'The Apache web server must be configured to use a specified IP address and port.' do
+      skip 'Could not find the VirtualHost directive defined in Apache config file. This check has failed.'
     end
   end
-
 end

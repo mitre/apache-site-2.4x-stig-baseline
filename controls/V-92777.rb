@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'V-92777' do
   title "The Apache web server must have resource mappings set to disable the
 serving of certain file types."
@@ -29,7 +27,7 @@ to a user, and all other types must be disabled.
     If this is not documented and approved by the Information System Security
 Officer (ISSO), this is a finding.
   "
-  desc  'fix', "
+  desc 'fix', "
     Determine the location of the \"HTTPD_ROOT\" directory and the
 \"httpd.conf\" file:
 
@@ -57,21 +55,20 @@ Officer (ISSO), this is a finding.
   tag nist: ['CM-7 a']
 
   config_path = input('config_path')
-  
+
   describe apache_conf(config_path) do
-    its('AddHandler.to_s') { should_not match '.exe'}
-    its('AddHandler.to_s') { should_not match '.dll'}
-    its('AddHandler.to_s') { should_not match '.com'}
-    its('AddHandler.to_s') { should_not match '.bat'}
-    its('AddHandler.to_s') { should_not match '.csh'}
+    its('AddHandler.to_s') { should_not match '.exe' }
+    its('AddHandler.to_s') { should_not match '.dll' }
+    its('AddHandler.to_s') { should_not match '.com' }
+    its('AddHandler.to_s') { should_not match '.bat' }
+    its('AddHandler.to_s') { should_not match '.csh' }
   end
-  
+
   describe apache_conf(config_path) do
-    its('Action.to_s') { should_not match '.exe'}
-    its('Action.to_s') { should_not match '.dll'}
-    its('Action.to_s') { should_not match '.com'}
-    its('Action.to_s') { should_not match '.bat'}
-    its('Action.to_s') { should_not match '.csh'}
+    its('Action.to_s') { should_not match '.exe' }
+    its('Action.to_s') { should_not match '.dll' }
+    its('Action.to_s') { should_not match '.com' }
+    its('Action.to_s') { should_not match '.bat' }
+    its('Action.to_s') { should_not match '.csh' }
   end
-  
 end

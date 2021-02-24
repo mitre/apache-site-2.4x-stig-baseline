@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'V-92785' do
   title "The Apache web server must perform RFC 5280-compliant certification
 path validation."
@@ -37,7 +35,7 @@ file:
     If \"SSLVerifyClient\" is not set to \"require\" or \"SSLVerifyDepth\" is
 not set to a number greater than \"0\", this is a finding.
   "
-  desc  'fix', "
+  desc 'fix', "
     Determine the location of the \"HTTPD_ROOT\" directory and the \"ssl.conf\"
 file:
 
@@ -66,36 +64,35 @@ https://httpd.apache.org/docs/current/mod/ssl_module.html
   tag nist: ['IA-5 (2) (a)']
 
   config_path = input('config_path')
-  ssl_module = command("httpd -M | grep -i ssl_module").stdout
+  ssl_module = command('httpd -M | grep -i ssl_module').stdout
 
-  describe ssl_module do 
-    it { should include "ssl_module" }
-  end 
-  
-  describe apache_conf(config_path) do 
+  describe ssl_module do
+    it { should include 'ssl_module' }
+  end
+
+  describe apache_conf(config_path) do
     its('SSLVerifyClient') { should_not be_nil }
   end
 
-  if !apache_conf(config_path).SSLVerifyClient.nil?
+  unless apache_conf(config_path).SSLVerifyClient.nil?
     apache_conf(config_path).SSLVerifyClient.each do |value|
-      describe "SSLVerifyClient should be set to require" do
-        subject { value } 
+      describe 'SSLVerifyClient should be set to require' do
+        subject { value }
         it { should cmp 'require' }
       end
     end
   end
 
-  describe apache_conf(config_path) do 
+  describe apache_conf(config_path) do
     its('SSLVerifyDepth') { should_not be_nil }
   end
 
-  if !apache_conf(config_path).SSLVerifyDepth.nil?
+  unless apache_conf(config_path).SSLVerifyDepth.nil?
     apache_conf(config_path).SSLVerifyDepth.each do |value|
-      describe "SSLVerifyDepth should be set to 1" do
-        subject { value } 
+      describe 'SSLVerifyDepth should be set to 1' do
+        subject { value }
         it { should cmp > 0 }
       end
     end
   end
-
 end

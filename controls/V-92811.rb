@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'V-92811' do
   title 'The Apache web server must set an inactive timeout for sessions.'
   desc  "Leaving sessions open indefinitely is a major security risk. An
@@ -18,7 +16,7 @@ medium-value applications, and 20 minutes for low-value applications.
 
     If the \"Reqtimeout_module\" is not enabled, this is a finding.
   "
-  desc  'fix', "
+  desc 'fix', "
     Determine the location of the \"HTTPD_ROOT\" directory and the
 \"httpd.conf\" file:
 
@@ -40,11 +38,9 @@ medium-value applications, and 20 minutes for low-value applications.
   tag cci: ['CCI-002361']
   tag nist: ['AC-12']
 
-  req_timeout_module = command("httpd -M | grep -i reqtimeout_module").stdout 
+  req_timeout_module = command('httpd -M | grep -i reqtimeout_module').stdout
 
-  describe req_timeout_module do 
-    it { should include "reqtimeout_module" }
+  describe req_timeout_module do
+    it { should include 'reqtimeout_module' }
   end
-  
 end
-

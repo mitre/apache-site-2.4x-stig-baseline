@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'V-92809' do
   title 'The Apache web server must set an absolute timeout for sessions.'
   desc  "Leaving sessions open indefinitely is a major security risk. An
@@ -26,7 +24,7 @@ the Apache web server."
     If the \"SessionMaxAge\" directive exists but is not set to \"600\", this
 is a finding.
   "
-  desc  'fix', "
+  desc 'fix', "
     Determine the location of the \"HTTPD_ROOT\" directory and the
 \"httpd.conf\" file:
 
@@ -48,17 +46,16 @@ is a finding.
 
   config_path = input('config_path')
 
-  describe apache_conf(config_path) do 
+  describe apache_conf(config_path) do
     its('SessionMaxAge') { should_not be_nil }
   end
 
-  if !apache_conf(config_path).SessionMaxAge.nil?
+  unless apache_conf(config_path).SessionMaxAge.nil?
     apache_conf(config_path).SessionMaxAge.each do |value|
-      describe "SessionMaxAge value should be less than or equal to 600" do
-        subject { value } 
+      describe 'SessionMaxAge value should be less than or equal to 600' do
+        subject { value }
         it { should be <= 600 }
       end
     end
   end
-  
 end

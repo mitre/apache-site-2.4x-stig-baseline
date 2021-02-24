@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'V-92779' do
   title "Users and scripts running on behalf of users must be contained to the
 document root or home directory tree of the Apache web server."
@@ -37,7 +35,7 @@ $APACHE_PREFIX/conf/httpd.conf
     If there are \"Allow\" or \"Deny\" directives in the root <Directory>
 element, this is a finding.
   "
-  desc  'fix', "
+  desc 'fix', "
     Determine the location of the \"HTTPD_ROOT\" directory and the
 \"httpd.conf\" file:
 
@@ -67,21 +65,20 @@ element.
   tag fix_id: 'F-99023r1_fix'
   tag cci: ['CCI-000381']
   tag nist: ['CM-7 a']
-  
+
   config_path = input('config_path')
   httpd = apache_conf(config_path)
-  root_directory = Array.new
+  root_directory = []
   root_directory.push(command("grep -n '^<Directory />' #{httpd}").stdout.strip)
   root_directory.push(command("grep -n -m1 '^</Directory>' #{httpd}").stdout.strip)
-  
-  line_numbers = root_directory ? root_directory.map {|tag| tag.split(":")[0]} : nil
+
+  line_numbers = root_directory ? root_directory.map { |tag| tag.split(':')[0] } : nil
 
   chunk = command("sed -n '#{line_numbers[0]},#{line_numbers[1]}p' #{httpd}").stdout
 
-  describe chunk do 
-      it { should include "Require all denied" }
-      it { should_not cmp /Allow / }
-      it { should_not cmp /Deny / }
+  describe chunk do
+    it { should include 'Require all denied' }
+    it { should_not cmp /Allow / }
+    it { should_not cmp /Deny / }
   end
-  
 end

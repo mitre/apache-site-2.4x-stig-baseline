@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'V-92769' do
   title "The Apache web server must produce log records containing sufficient
 information to establish what type of events occurred."
@@ -41,7 +39,7 @@ following, this is a finding:
 
     LogFormat \"%a %A %h %H %l %m %s %t %u %U \\\"%{Referer}i\\\" \" common
   "
-  desc  'fix', "
+  desc 'fix', "
     Determine the location of the \"HTTPD_ROOT\" directory and the
 \"httpd.conf\" file:
 
@@ -73,15 +71,14 @@ of logged elements.
   tag nist: ['AU-3']
 
   config_path = input('config_path')
-  log_config = command("httpd -M | grep -i log_config_module").stdout 
+  log_config = command('httpd -M | grep -i log_config_module').stdout
 
-  describe log_config do 
-    it { should include "log_config_module" }
-  end 
-  
-  describe apache_conf(config_path) do 
+  describe log_config do
+    it { should include 'log_config_module' }
+  end
+
+  describe apache_conf(config_path) do
     subject { file(config_path).content.to_s }
     it { should match /^\s*LogFormat \"%a %A %h %H %l %m %s %t %u %U \\\"%{Referer}i\\\" \" common/ }
-  end 
-
+  end
 end
