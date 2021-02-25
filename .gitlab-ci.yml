@@ -1,6 +1,6 @@
 include:
 - project: stig/inspec-scanning-integration
-  ref: 1.1.8
+  ref: 1.1.11
   file: templates/templates.yml
 
 before_script:
@@ -24,6 +24,14 @@ exec Apache_2.4_Site:
     TARGET: 'rep.dsolab.io/baselines/apache2.4_baseline:1.1'
 
 publish Apache_2.4_Site:
-  extends: .ci:stage:publish:inspec
+  extends: .ci:stage:publish:inspec:artifacts
   dependencies:
+  - check Apache_2.4_Site
+  - lint Apache_2.4_Site
   - exec Apache_2.4_Site
+
+sync:
+  extends: .ci:stage:publish:inspec:sync
+  variables:
+    SYNC_REPO: "repo1.dso.mil/disa/inspec/apache/httpd_2.4x_site.git"
+    SYNC_TOKEN: $IR1_APACHE_SITE24X
